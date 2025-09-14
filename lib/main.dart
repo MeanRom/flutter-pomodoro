@@ -1,12 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:pomodoro/services/provider_timer.dart';
 import 'package:pomodoro/services/theme.dart';
 import 'package:pomodoro/widgets/navigation.dart';
 import 'package:pomodoro/widgets/todo.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/timer.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => PomodoroTimerNotifier(),
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

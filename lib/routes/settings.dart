@@ -19,7 +19,6 @@ class SettingsPage extends StatelessWidget {
               },
               child: Icon(LucideIcons.arrowLeft, size: 20),
             ),
-            SizedBox(width: 8),
             Text(
               'Settings',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
