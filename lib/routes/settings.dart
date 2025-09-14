@@ -13,6 +13,7 @@ class SettingsPage extends StatelessWidget {
           children: [
             CupertinoButton(
               padding: EdgeInsets.zero,
+              mouseCursor: SystemMouseCursors.click,
               onPressed: () {
                 Navigator.pop(context);
               },
