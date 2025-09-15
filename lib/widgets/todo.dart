@@ -1,69 +1,66 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:pomodoro/interface/i_todo.dart';
+import 'package:pomodoro/services/provider_todo.dart';
+import 'package:provider/provider.dart';
 
 class Todo extends StatefulWidget {
-  Todo({super.key});
-
-  List<ITodo> todoslist = [];
-
+  const Todo({super.key});
   @override
-  _TodoState createState() => _TodoState();
+  State<Todo> createState() => _TodoState();
 }
 
 class _TodoState extends State<Todo> {
-  @override
-  void removeItem(ITodo todo) {
-    setState(() {
-      widget.todoslist.remove(todo);
-    });
-  }
-
-  void addItem(String text) {
-    setState(() {
-      widget.todoslist.add(ITodo(text: text));
-    });
-  }
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TodoInput(onSubmit: addItem),
-        Column(
-          children: widget.todoslist
-              .map((todo) => TodoItem(todo: todo, onRemove: removeItem))
-              .toList(growable: false),
+    return Consumer<ProviderTodo>(
+      builder: (context, provider, child) => Padding(
+        padding: const EdgeInsets.only(top: 77.0),
+        child: Column(
+          children: [
+            CupertinoTextField.borderless(
+              placeholder: 'Add a new task',
+              controller: _controller,
+              onSubmitted: (value) {
+                if (value.trim().isNotEmpty) {
+                  provider.addTodo(value.trim());
+                  _controller.clear();
+                }
+              },
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: CupertinoColors.systemGrey4),
+                ),
+              ),
+            ),
+            for (var todo in provider.todos)
+              TodoItem(
+                todo: todo,
+                index: provider.todos.indexOf(todo),
+                onRemove: (index) {
+                  provider.removeTodoAt(index);
+                },
+              ),
+          ],
         ),
-      ],
-    );
-  }
-}
-
-class TodoInput extends StatelessWidget {
-  TodoInput({super.key, required this.onSubmit});
-  final Function(String) onSubmit;
-  final TextEditingController controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoTextField.borderless(
-      controller: controller,
-      placeholder: "Add a new task",
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: CupertinoColors.systemGrey)),
       ),
-      onSubmitted: (value) => {onSubmit(value), controller.clear()},
     );
   }
 }
 
 class TodoItem extends StatelessWidget {
-  final ITodo todo;
+  final String todo;
+  final int index;
 
-  const TodoItem({super.key, required this.todo, required this.onRemove});
-  final Function(ITodo) onRemove;
+  const TodoItem({
+    super.key,
+    required this.todo,
+    required this.onRemove,
+    required this.index,
+  });
+  final Function(int) onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,7 @@ class TodoItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(todo.text, style: TextStyle(fontSize: 16)),
+          Text(todo, style: TextStyle(fontSize: 16)),
           CupertinoButton(
             mouseCursor: SystemMouseCursors.click,
             padding: EdgeInsets.zero,
@@ -83,7 +80,7 @@ class TodoItem extends StatelessWidget {
               size: 16,
             ),
             onPressed: () {
-              onRemove(todo);
+              onRemove(index);
             },
           ),
         ],

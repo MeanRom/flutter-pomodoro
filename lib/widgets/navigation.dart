@@ -70,7 +70,10 @@ class _NavigationState extends State<Navigation> {
                             height: 4,
                             width: 4,
                             decoration: BoxDecoration(
-                              color: CupertinoColors.black,
+                              color:
+                                  timer.isRunning && timer.darkmodeDuringRunning
+                                  ? CupertinoColors.white
+                                  : CupertinoColors.black,
                               shape: BoxShape.circle,
                             ),
                           ),
