@@ -2,6 +2,7 @@
 *A small but mighty productivity app that might just help you (and me) stay focused, get work done, and actually finish those projects sitting in your todo-list.*
 
 ![TM | Pomodoro Preview](/github/screenshots/app_preview.png)
+🎨 [View Figma design](https://www.figma.com/design/g9otSqKmdFlU6dkaEkMEjd/TM-%7C%C2%A0Pomodoro---Design?node-id=0-1&t=0D9SHJADTsMFyYma-1)
 
 This started as a simple app experiment, but the goal is to grow it into something bigger over time — including integration with a separate todo-list project to make task management less painful than v1.
 
