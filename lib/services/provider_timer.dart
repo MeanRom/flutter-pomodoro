@@ -9,6 +9,9 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   int _currentSeconds = 0;
   Timer? _timer;
 
+  int currentCycleIndex = 0;
+  List<int> cycle = [0, 1, 0, 1, 0, 2];
+
   PomodoroTimerNotifier({
     List<double>? durations,
     int? index,
@@ -33,7 +36,8 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   }
 
   void _nextSession() {
-    index = (index + 1) % durations.length; // Cycle through durations
+    currentCycleIndex = (currentCycleIndex + 1) % cycle.length;
+    index = cycle[currentCycleIndex];
     _currentSeconds = (durations[index] * 60).toInt();
     notifyListeners();
     print("Switched to session $index: ${durations[index]} minutes");

@@ -21,58 +21,62 @@ class _NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     return Consumer<PomodoroTimerNotifier>(
-      // Listen to notifier changes
-      builder: (context, timer, child) => CupertinoPageScaffold(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (var button in buttons)
-              CupertinoButton(
-                borderRadius: BorderRadius.circular(8),
-                mouseCursor: SystemMouseCursors.click,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                onPressed: () {
-                  // Update button states
-                  for (var b in buttons) {
-                    b.isActive = false;
-                  }
-                  button.isActive = true;
+      builder: (context, timer, child) {
+        for (var button in buttons) {
+          button.isActive = buttons.indexOf(button) == timer.index;
+        }
+        return CupertinoPageScaffold(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var button in buttons)
+                CupertinoButton(
+                  borderRadius: BorderRadius.circular(8),
+                  mouseCursor: SystemMouseCursors.click,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  onPressed: () {
+                    // Update button states
+                    for (var b in buttons) {
+                      b.isActive = false;
+                    }
+                    button.isActive = true;
 
-                  // Update notifier index (0 = Pomodoro, 1 = Short, 2 = Long)
-                  timer.setIndex(buttons.indexOf(button));
-                },
-                child: Column(
-                  children: [
-                    Text(
-                      button.text,
-                      style: TextStyle(
-                        fontSize: 16,
-                        letterSpacing: -1.8,
-                        fontWeight: button.isActive
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    if (button.isActive)
-                      Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        height: 4,
-                        width: 4,
-                        decoration: BoxDecoration(
-                          color: CupertinoColors.black,
-                          shape: BoxShape.circle,
+                    // Update notifier index (0 = Pomodoro, 1 = Short, 2 = Long)
+                    timer.setIndex(buttons.indexOf(button));
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        button.text,
+                        style: TextStyle(
+                          fontSize: 16,
+                          letterSpacing: -1.8,
+                          fontWeight: button.isActive
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
-                  ],
+                      if (button.isActive)
+                        Container(
+                          margin: const EdgeInsets.only(top: 2),
+                          height: 4,
+                          width: 4,
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.black,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
