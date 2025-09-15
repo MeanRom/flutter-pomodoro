@@ -3,19 +3,23 @@ import 'package:pomodoro/interface/i_navigation.dart';
 import 'package:pomodoro/services/provider_timer.dart';
 import 'package:provider/provider.dart'; // Add this for provider access
 
-class Navigation extends StatelessWidget {
+class Navigation extends StatefulWidget {
   // Changed to StatelessWidget
   const Navigation({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // List of navigation buttons with initial state
-    final buttons = [
-      INavigation(text: 'Pomodoro', isActive: true),
-      INavigation(text: 'Short break', isActive: false),
-      INavigation(text: 'Long break', isActive: false),
-    ];
+  State<Navigation> createState() => _NavigationState();
+}
 
+class _NavigationState extends State<Navigation> {
+  final buttons = [
+    INavigation(text: 'Pomodoro', isActive: true),
+    INavigation(text: 'Short break', isActive: false),
+    INavigation(text: 'Long break', isActive: false),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer<PomodoroTimerNotifier>(
       // Listen to notifier changes
       builder: (context, timer, child) => CupertinoPageScaffold(
