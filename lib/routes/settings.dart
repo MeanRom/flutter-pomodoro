@@ -50,7 +50,9 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 62.0),
+            padding: MediaQuery.of(context).size.width > 600
+                ? const EdgeInsets.only(top: 60)
+                : const EdgeInsets.only(top: 142.0),
             child: Center(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width > 600
