@@ -51,16 +51,32 @@ class _TimerState extends State<Timer> {
                 child: timer.isRunning
                     ? Row(
                         spacing: 4,
-                        children: const [
-                          Icon(LucideIcons.pause, size: 14),
-                          Text("stop", style: TextStyle(letterSpacing: -1.8)),
+                        children: [
+                          Icon(
+                            LucideIcons.pause,
+                            size: 14,
+                            color: ThemeColor().secondaryColor,
+                          ),
+                          Text(
+                            "stop",
+                            style: TextStyle(
+                              letterSpacing: -1.8,
+                              color: ThemeColor().secondaryColor,
+                            ),
+                          ),
                         ],
                       )
                     : Row(
                         spacing: 4,
-                        children: const [
+                        children: [
                           Icon(LucideIcons.play, size: 14),
-                          Text("play", style: TextStyle(letterSpacing: -1.8)),
+                          Text(
+                            "play",
+                            style: TextStyle(
+                              letterSpacing: -1.8,
+                              color: ThemeColor().secondaryColor,
+                            ),
+                          ),
                         ],
                       ),
               ),
@@ -76,16 +92,24 @@ class _TimerState extends State<Timer> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    CupertinoPageRoute(
-                      builder: (context) => const SettingsPage(),
-                    ),
+                    CupertinoPageRoute(builder: (context) => SettingsPage()),
                   );
                 },
                 child: Row(
                   spacing: 4,
-                  children: const [
-                    Icon(LucideIcons.settings, size: 14),
-                    Text("settings", style: TextStyle(letterSpacing: -1.8)),
+                  children: [
+                    Icon(
+                      LucideIcons.settings,
+                      size: 14,
+                      color: ThemeColor().secondaryColor,
+                    ),
+                    Text(
+                      "settings",
+                      style: TextStyle(
+                        letterSpacing: -1.8,
+                        color: ThemeColor().secondaryColor,
+                      ),
+                    ),
                   ],
                 ),
               ),

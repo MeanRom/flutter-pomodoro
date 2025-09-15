@@ -5,6 +5,7 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   List<double> durations = [25, 5, 15];
   int index = 0;
   bool isRunning = false;
+  bool darkmodeDuringRunning = false;
   int _currentSeconds = 0;
   Timer? _timer;
 
@@ -12,10 +13,13 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     List<double>? durations,
     int? index,
     bool? isRunning,
+    bool? darkmodeDuringRunning,
   }) {
     if (durations != null) this.durations = durations;
     if (index != null) this.index = index;
     if (isRunning != null) this.isRunning = isRunning;
+    if (this.index < 0 || this.index >= this.durations.length) this.index = 0;
+    darkmodeDuringRunning ??= false;
     _currentSeconds = (this.durations[this.index] * 60).toInt();
     print(
       "PomodoroTimerNotifier initialized with durations: $durations, index: $index, isRunning: $isRunning",

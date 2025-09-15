@@ -21,29 +21,35 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      theme: ThemeColor(),
-      debugShowCheckedModeBanner: false,
-      home: CupertinoPageScaffold(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
-          child: Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width > 600
-                  ? 500
-                  : MediaQuery.of(context).size.width * 0.9,
-              child: Column(
-                spacing: 48,
-                children: [
-                  Navigation(),
-                  Center(child: Timer()),
-                  Todo(),
-                ],
+    return Consumer<PomodoroTimerNotifier>(
+      builder: (context, timer, child) {
+        return CupertinoApp(
+          theme: timer.darkmodeDuringRunning == true && timer.isRunning
+              ? ThemeColor.dark()
+              : ThemeColor(),
+          debugShowCheckedModeBanner: false,
+          home: CupertinoPageScaffold(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width > 600
+                      ? 500
+                      : MediaQuery.of(context).size.width * 0.9,
+                  child: Column(
+                    spacing: 48,
+                    children: [
+                      Navigation(),
+                      Center(child: Timer()),
+                      Todo(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
