@@ -38,10 +38,12 @@ class _NavigationState extends State<Navigation> {
                   CupertinoButton(
                     borderRadius: BorderRadius.circular(8),
                     mouseCursor: SystemMouseCursors.click,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+                    padding: MediaQuery.of(context).size.width > 600
+                        ? const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          )
+                        : const EdgeInsets.all(30),
                     onPressed: () {
                       // Update button states
                       for (var b in buttons) {
