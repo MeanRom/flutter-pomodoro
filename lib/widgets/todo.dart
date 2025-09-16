@@ -17,7 +17,8 @@ class _TodoState extends State<Todo> {
     return Consumer<ProviderTodo>(
       builder: (context, provider, child) => Padding(
         padding: const EdgeInsets.only(top: 77.0),
-        child: Column(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             CupertinoTextField.borderless(
               placeholder: 'Add a new task',
