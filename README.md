@@ -21,8 +21,7 @@ Major updates won’t be maintained on this repo, but smaller ones? Absolutely.
 
 - [ ] Sync between devices (iOS & macOS only)  
 - [ ] Todo-list grouping  
-- [ ] Manually adjustable timer cycles  
-- [ ] Local storage for settings and todo-list  
+- [ ] Manually adjustable timer cycles
 - [ ] …and plenty of small tweaks along the way!  
 
 ---

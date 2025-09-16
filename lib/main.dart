@@ -42,8 +42,8 @@ class MainApp extends StatelessWidget {
               width: MediaQuery.of(context).size.width > 600
                   ? 500
                   : MediaQuery.of(context).size.width * 0.9,
-              child: Column(
-                spacing: 20,
+              child: ListView(
+                padding: EdgeInsets.zero,
                 children: [
                   Navigation(),
                   Center(child: Timer()),
