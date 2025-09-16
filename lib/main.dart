@@ -43,6 +43,7 @@ class MainApp extends StatelessWidget {
                   ? 500
                   : MediaQuery.of(context).size.width * 0.9,
               child: Column(
+                spacing: 20,
                 children: [
                   Navigation(),
                   Center(child: Timer()),
