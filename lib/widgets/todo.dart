@@ -16,7 +16,7 @@ class _TodoState extends State<Todo> {
   Widget build(BuildContext context) {
     return Consumer<ProviderTodo>(
       builder: (context, provider, child) => Padding(
-        padding: const EdgeInsets.only(top: 77.0),
+        padding: const EdgeInsets.only(top: 35.0),
         child: Column(
           children: [
             CupertinoTextField.borderless(
@@ -35,14 +35,23 @@ class _TodoState extends State<Todo> {
                 ),
               ),
             ),
-            for (var todo in provider.todos)
-              TodoItem(
-                todo: todo,
-                index: provider.todos.indexOf(todo),
-                onRemove: (index) {
-                  provider.removeTodoAt(index);
-                },
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height - 380,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  for (var todo in provider.todos)
+                    TodoItem(
+                      todo: todo,
+                      index: provider.todos.indexOf(todo),
+                      onRemove: (index) {
+                        provider.removeTodoAt(index);
+                      },
+                    ),
+                ],
               ),
+            ),
           ],
         ),
       ),
