@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:pomodoro/services/provider_timer.dart';
 import 'package:pomodoro/services/provider_todo.dart';
 import 'package:pomodoro/services/theme.dart';
@@ -15,8 +16,10 @@ import 'widgets/timer.dart';
 // If no, initialize with empty list
 // --------------------------------
 
-void main() {
-  // Provider.debugCheckInvalidValueType = null; // Disable provider type check
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
   runApp(
     MultiProvider(
       providers: [
