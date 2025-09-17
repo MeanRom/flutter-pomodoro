@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/services/provider_timer.dart';
@@ -198,8 +197,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: CupertinoSwitch(
                             value: timer.darkmodeDuringRunning,
                             onChanged: (value) {
-                              timer.darkmodeDuringRunning = value;
-                              timer.notifyListeners();
+                              timer.updateDarkmodeDuringRunning(value);
                             },
                           ),
                         ),

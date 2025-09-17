@@ -1,5 +1,8 @@
 import 'dart:async'; // For Timer
+import 'dart:convert';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
+import 'package:localstorage/localstorage.dart';
+import 'package:pomodoro/interface/i_settings.dart';
 
 class PomodoroTimerNotifier extends ChangeNotifier {
   List<double> durations = [25, 5, 15];
@@ -8,6 +11,7 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   bool darkmodeDuringRunning = false;
   int _currentSeconds = 0;
   Timer? _timer;
+  
 
   int currentCycleIndex = 0;
   List<int> cycle = [0, 1, 0, 1, 0, 2];
@@ -18,7 +22,21 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     bool? isRunning,
     bool? darkmodeDuringRunning,
   }) {
-    if (durations != null) this.durations = durations;
+    String raw = localStorage.getItem('settings') ?? '{}';
+    ISettings settings = ISettings(
+      durations: this.durations,
+      darkmodeDuringRunning: this.darkmodeDuringRunning,
+    );
+    try {
+      settings = jsonDecode(raw);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error decoding settings from local storage: $e");
+      }
+    }
+    if (settings.durations != null) this.durations = settings.durations;
+    if (settings.darkmodeDuringRunning != null)
+      this.darkmodeDuringRunning = settings.darkmodeDuringRunning;
     if (index != null) this.index = index;
     if (isRunning != null) this.isRunning = isRunning;
     if (this.index < 0 || this.index >= this.durations.length) this.index = 0;
@@ -75,8 +93,28 @@ class PomodoroTimerNotifier extends ChangeNotifier {
       if (index >= durations.length) index = 0; // Prevent out-of-bounds
       reset();
       notifyListeners();
+      localStorage.setItem(
+        'settings',
+        jsonEncode({
+          'durations': durations,
+          'darkmodeDuringRunning': darkmodeDuringRunning,
+        }),
+      );
       print("Updated durations: $durations");
     }
+  }
+
+  void updateDarkmodeDuringRunning(bool value) {
+    darkmodeDuringRunning = value;
+    notifyListeners();
+    localStorage.setItem(
+      'settings',
+      jsonEncode({
+        'durations': durations,
+        'darkmodeDuringRunning': darkmodeDuringRunning,
+      }),
+    );
+    print("Updated darkmodeDuringRunning: $darkmodeDuringRunning");
   }
 
   void reset() {

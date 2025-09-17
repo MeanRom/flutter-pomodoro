@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:pomodoro/services/provider_timer.dart';
 import 'package:pomodoro/services/provider_todo.dart';
 import 'package:pomodoro/services/theme.dart';
@@ -8,8 +9,17 @@ import 'package:provider/provider.dart';
 
 import 'widgets/timer.dart';
 
-void main() {
-  // Provider.debugCheckInvalidValueType = null; // Disable provider type check
+// --------------------------------
+// Add localstorage package
+// Check if localstorage has data
+// If yes, load data into ProviderTodo
+// If no, initialize with empty list
+// --------------------------------
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
   runApp(
     MultiProvider(
       providers: [
