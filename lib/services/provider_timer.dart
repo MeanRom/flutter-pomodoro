@@ -5,15 +5,15 @@ import 'package:localstorage/localstorage.dart';
 import 'package:pomodoro/interface/i_settings.dart';
 
 class PomodoroTimerNotifier extends ChangeNotifier {
-  List<double> durations = [25, 5, 15];
-  int index = 0;
-  bool isRunning = false;
-  bool darkmodeDuringRunning = false;
+  final List<double> _durations = [25, 5, 15];
+  int _index = 0;
+  bool _isRunning = false;
+  bool _darkmodeDuringRunning = false;
   int _currentSeconds = 0;
   Timer? _timer;
 
-  int currentCycleIndex = 0;
-  List<int> cycle = [0, 1, 0, 1, 0, 2];
+  int _currentCycleIndex = 0;
+  final List<int> _cycle = [0, 1, 0, 1, 0, 2];
 
   PomodoroTimerNotifier({
     List<double>? durations,
@@ -21,29 +21,34 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     bool? isRunning,
     bool? darkmodeDuringRunning,
   }) {
-    String raw = localStorage.getItem('settings') ?? '{}';
+    String raw = localStorage.getItem('settings') ?? '';
     ISettings settings = ISettings(
-      durations: this.durations,
-      darkmodeDuringRunning: this.darkmodeDuringRunning,
+      durations: durations ?? [25, 5, 15],
+      darkmodeDuringRunning: darkmodeDuringRunning ?? false,
     );
     try {
-      settings = jsonDecode(raw);
+      settings = ISettings.fromJson(jsonDecode(raw));
     } catch (e) {
       if (kDebugMode) {
         print("Error decoding settings from local storage: $e");
       }
     }
-    if (settings.durations != null) this.durations = settings.durations;
-    if (settings.darkmodeDuringRunning != null)
-      this.darkmodeDuringRunning = settings.darkmodeDuringRunning;
-    if (index != null) this.index = index;
-    if (isRunning != null) this.isRunning = isRunning;
-    if (this.index < 0 || this.index >= this.durations.length) this.index = 0;
-    darkmodeDuringRunning ??= false;
-    _currentSeconds = (this.durations[this.index] * 60).toInt();
-    print(
-      "PomodoroTimerNotifier initialized with durations: $durations, index: $index, isRunning: $isRunning",
-    );
+
+    if (settings != null) {
+      if (settings.durations != null && settings.durations.length >= 3) {
+        for (int i = 0; i < 3; i++) {
+          _durations[i] = settings.durations[i];
+        }
+      }
+      if (settings.darkmodeDuringRunning != null) {
+        _darkmodeDuringRunning = settings.darkmodeDuringRunning;
+      }
+    }
+
+    _index = index ?? 0;
+    _isRunning = isRunning ?? false;
+    _currentSeconds = (_durations[_index] * 60).toInt();
+    _currentCycleIndex = _cycle.indexOf(_index);
   }
 
   String get timeString {
@@ -52,25 +57,33 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     return '$minutes:$seconds';
   }
 
+  get darkmodeDuringRunning => _darkmodeDuringRunning;
+
+  bool get isRunning => _isRunning;
+
+  get durations => _durations;
+
+  Object get index => _index;
+
   void _nextSession() {
-    currentCycleIndex = (currentCycleIndex + 1) % cycle.length;
-    index = cycle[currentCycleIndex];
-    _currentSeconds = (durations[index] * 60).toInt();
+    _currentCycleIndex = (_currentCycleIndex + 1) % _cycle.length;
+    _index = _cycle[_currentCycleIndex];
+    _currentSeconds = (_durations![_index] * 60).toInt();
     notifyListeners();
-    print("Switched to session $index: ${durations[index]} minutes");
+    print("Switched to session $_index: ${_durations![_index]} minutes");
   }
 
   void start() {
-    if (isRunning) return;
-    print("Starting timer for ${durations[index]} minutes.");
-    isRunning = true;
+    if (_isRunning) return;
+    print("Starting timer for ${_durations![_index]} minutes.");
+    _isRunning = true;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_currentSeconds > 0) {
         _currentSeconds--;
         notifyListeners();
       } else {
         timer.cancel();
-        isRunning = false;
+        _isRunning = false;
         _nextSession(); // Switch to next session
         start(); // Auto-start next session (optional)
       }
@@ -79,53 +92,52 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   }
 
   void stop() {
-    if (!isRunning) return; // Prevent stopping if not running
+    if (!_isRunning) return; // Prevent stopping if not running
     print("Stopping timer.");
-    isRunning = false;
+    _isRunning = false;
     _timer?.cancel();
     notifyListeners();
   }
 
   void updateDurations() {
     notifyListeners();
-    if (durations.isNotEmpty) {
-      _currentSeconds = (durations[index] * 60).toInt();
-      notifyListeners();
+    if (_durations.isNotEmpty) {
+      _currentSeconds = (_durations[_index] * 60).toInt();
       localStorage.setItem(
         'settings',
         jsonEncode({
-          'durations': durations,
-          'darkmodeDuringRunning': darkmodeDuringRunning,
+          'durations': _durations,
+          'darkmodeDuringRunning': _darkmodeDuringRunning,
         }),
       );
-      print("Updated durations: $durations");
+      print("Updated durations: $_durations");
     }
   }
 
   void updateDarkmodeDuringRunning(bool value) {
-    darkmodeDuringRunning = value;
+    _darkmodeDuringRunning = value;
     notifyListeners();
     localStorage.setItem(
       'settings',
       jsonEncode({
-        'durations': durations,
-        'darkmodeDuringRunning': darkmodeDuringRunning,
+        'durations': _durations,
+        'darkmodeDuringRunning': _darkmodeDuringRunning,
       }),
     );
-    print("Updated darkmodeDuringRunning: $darkmodeDuringRunning");
+    print("Updated darkmodeDuringRunning: $_darkmodeDuringRunning");
   }
 
   void reset() {
     print("Resetting timer.");
-    isRunning = false;
+    _isRunning = false;
     _timer?.cancel();
-    _currentSeconds = (durations[index] * 60).toInt();
+    _currentSeconds = (_durations[_index] * 60).toInt();
     notifyListeners();
   }
 
   void setIndex(int newIndex) {
-    if (newIndex < 0 || newIndex >= durations.length) return;
-    index = newIndex;
+    if (newIndex < 0 || newIndex >= _durations.length) return;
+    _index = newIndex;
     reset();
     notifyListeners();
   }
