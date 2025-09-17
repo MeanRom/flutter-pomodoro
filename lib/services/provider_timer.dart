@@ -11,7 +11,6 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   bool darkmodeDuringRunning = false;
   int _currentSeconds = 0;
   Timer? _timer;
-  
 
   int currentCycleIndex = 0;
   List<int> cycle = [0, 1, 0, 1, 0, 2];
@@ -87,11 +86,10 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateDurations(List<double> newDurations) {
-    if (newDurations.isNotEmpty) {
-      durations = newDurations;
-      if (index >= durations.length) index = 0; // Prevent out-of-bounds
-      reset();
+  void updateDurations() {
+    notifyListeners();
+    if (durations.isNotEmpty) {
+      _currentSeconds = (durations[index] * 60).toInt();
       notifyListeners();
       localStorage.setItem(
         'settings',

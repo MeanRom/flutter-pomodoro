@@ -156,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                           ),
                           onPressed: () {
-                            timer.notifyListeners();
+                            timer.updateDurations();
                             Navigator.pop(context);
                           },
                         ),

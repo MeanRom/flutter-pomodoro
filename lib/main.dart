@@ -9,13 +9,6 @@ import 'package:provider/provider.dart';
 
 import 'widgets/timer.dart';
 
-// --------------------------------
-// Add localstorage package
-// Check if localstorage has data
-// If yes, load data into ProviderTodo
-// If no, initialize with empty list
-// --------------------------------
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocalStorage();
