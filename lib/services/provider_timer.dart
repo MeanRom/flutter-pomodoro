@@ -1,5 +1,6 @@
 import 'dart:async'; // For Timer
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart'; // For ChangeNotifier
 import 'package:localstorage/localstorage.dart';
 import 'package:pomodoro/interface/i_settings.dart';
@@ -11,6 +12,7 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   bool _darkmodeDuringRunning = false;
   int _currentSeconds = 0;
   Timer? _timer;
+  final player = AudioPlayer();
 
   int _currentCycleIndex = 0;
   final List<int> _cycle = [0, 1, 0, 1, 0, 2];
@@ -65,7 +67,8 @@ class PomodoroTimerNotifier extends ChangeNotifier {
 
   Object get index => _index;
 
-  void _nextSession() {
+  void _nextSession() async {
+    await player.play(AssetSource('sounds/pomodoro.mp3'));
     _currentCycleIndex = (_currentCycleIndex + 1) % _cycle.length;
     _index = _cycle[_currentCycleIndex];
     _currentSeconds = (_durations![_index] * 60).toInt();
