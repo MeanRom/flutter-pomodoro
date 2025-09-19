@@ -2,7 +2,7 @@
 
 *A small, mighty productivity app to help you (and me) stay focused, get work done, and actually finish projects.*
 
-(/github/screenshots/app_preview.png)
+![Pomodoro Cover](/github/screenshots/app_preview.png)
 
 🎨 [View the Figma design](https://www.figma.com/design/g9otSqKmdFlU6dkaEkMEjd/TM-%7C%C2%A0Pomodoro---Design?node-id=0-1&t=0D9SHJADTsMFyYma-1)
 
