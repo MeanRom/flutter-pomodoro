@@ -62,11 +62,13 @@ sdk: ^3.9.0
 ### Dependencies:
 
 ```
-flutter:
-  sdk: flutter
-lucide_icons_flutter: ^3.1.0
-provider: ^6.1.5+1
-rxdart: ^0.28.0
+  audioplayers: ^6.5.1
+  flutter:
+    sdk: flutter
+  localstorage: ^6.0.0
+  lucide_icons_flutter: ^3.1.0
+  provider: ^6.1.5+1
+  rxdart: ^0.28.0
 ```
 
 ### Dev dependencies:
@@ -74,7 +76,7 @@ rxdart: ^0.28.0
 ```
 flutter_test:
   sdk: flutter
-flutter_lints: ^5.0.0
+flutter_lints: ^6.0.0
 ```
 
 ### Configuration:
