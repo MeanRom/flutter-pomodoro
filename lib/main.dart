@@ -1,12 +1,27 @@
 import 'package:flutter/cupertino.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:pomodoro/services/provider_timer.dart';
+import 'package:pomodoro/services/provider_todo.dart';
 import 'package:pomodoro/services/theme.dart';
 import 'package:pomodoro/widgets/navigation.dart';
 import 'package:pomodoro/widgets/todo.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/timer.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PomodoroTimerNotifier()),
+        ChangeNotifierProvider(create: (_) => ProviderTodo()),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -15,7 +30,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      theme: ThemeColor(),
+      theme:
+          Provider.of<PomodoroTimerNotifier>(context).darkmodeDuringRunning ==
+                  true &&
+              Provider.of<PomodoroTimerNotifier>(context).isRunning
+          ? ThemeColor.dark()
+          : ThemeColor(),
       debugShowCheckedModeBanner: false,
       home: CupertinoPageScaffold(
         child: Padding(
@@ -26,7 +46,7 @@ class MainApp extends StatelessWidget {
                   ? 500
                   : MediaQuery.of(context).size.width * 0.9,
               child: Column(
-                spacing: 48,
+                spacing: 20,
                 children: [
                   Navigation(),
                   Center(child: Timer()),
