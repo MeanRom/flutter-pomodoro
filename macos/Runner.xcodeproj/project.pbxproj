@@ -204,7 +204,6 @@
 				90A1292F464E4CE7901B38B1 /* Pods-RunnerTests.release.xcconfig */,
 				50CC538A4652D9AED7A675A1 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -600,6 +599,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = tm.pomodoro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
@@ -755,6 +755,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = "";
 				PRODUCT_BUNDLE_IDENTIFIER = tm.pomodoro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
@@ -793,6 +794,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = "";
+				"MARKETING_VERSION[sdk=macosx*]" = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = tm.pomodoro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
