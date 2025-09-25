@@ -11,6 +11,7 @@ class Todo extends StatefulWidget {
 
 class _TodoState extends State<Todo> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +23,12 @@ class _TodoState extends State<Todo> {
             CupertinoTextField.borderless(
               placeholder: 'Add a new task',
               controller: _controller,
+              focusNode: _focusNode,
               onSubmitted: (value) {
                 if (value.trim().isNotEmpty) {
                   provider.addTodo(value.trim());
                   _controller.clear();
+                  FocusScope.of(context).requestFocus(_focusNode);
                 }
               },
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -78,7 +81,16 @@ class TodoItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(todo, style: TextStyle(fontSize: 16)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Text(
+                todo,
+                style: TextStyle(fontSize: 16),
+                softWrap: true,
+              ),
+            ),
+          ),
           CupertinoButton(
             mouseCursor: SystemMouseCursors.click,
             padding: EdgeInsets.zero,

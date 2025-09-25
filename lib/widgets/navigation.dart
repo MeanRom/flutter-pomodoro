@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
 import 'package:pomodoro/interface/i_navigation.dart';
 import 'package:pomodoro/services/provider_timer.dart';
@@ -27,9 +28,9 @@ class _NavigationState extends State<Navigation> {
         }
         return CupertinoPageScaffold(
           child: Padding(
-            padding: MediaQuery.of(context).size.width > 600
-                ? const EdgeInsets.only(top: 0)
-                : const EdgeInsets.only(top: 40),
+            padding: Platform.isIOS
+                ? const EdgeInsets.only(top: 40)
+                : const EdgeInsets.only(top: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,12 +39,12 @@ class _NavigationState extends State<Navigation> {
                   CupertinoButton(
                     borderRadius: BorderRadius.circular(8),
                     mouseCursor: SystemMouseCursors.click,
-                    padding: MediaQuery.of(context).size.width > 600
-                        ? const EdgeInsets.symmetric(
-                            horizontal: 16,
+                    padding: Platform.isIOS
+                        ? const EdgeInsets.all(30)
+                        : const EdgeInsets.symmetric(
+                            horizontal: 14,
                             vertical: 12,
-                          )
-                        : const EdgeInsets.all(30),
+                          ),
                     onPressed: () {
                       // Update button states
                       for (var b in buttons) {
@@ -60,7 +61,7 @@ class _NavigationState extends State<Navigation> {
                           button.text,
                           style: TextStyle(
                             fontSize: 16,
-                            letterSpacing: -1.8,
+                            letterSpacing: Platform.isIOS ? -2.4 : -1.8,
                             fontWeight: button.isActive
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -69,8 +70,8 @@ class _NavigationState extends State<Navigation> {
                         if (button.isActive)
                           Container(
                             margin: const EdgeInsets.only(top: 2),
-                            height: 4,
-                            width: 4,
+                            height: Platform.isIOS ? 6 : 4,
+                            width: Platform.isIOS ? 6 : 4,
                             decoration: BoxDecoration(
                               color:
                                   timer.isRunning && timer.darkmodeDuringRunning
