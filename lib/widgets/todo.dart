@@ -81,7 +81,16 @@ class TodoItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(todo, style: TextStyle(fontSize: 16)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Text(
+                todo,
+                style: TextStyle(fontSize: 16),
+                softWrap: true,
+              ),
+            ),
+          ),
           CupertinoButton(
             mouseCursor: SystemMouseCursors.click,
             padding: EdgeInsets.zero,
