@@ -9,10 +9,12 @@ import 'package:pomodoro/widgets/todo.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/timer.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocalStorage();
+  await NotificationService().init();
 
   runApp(
     MultiProvider(
@@ -32,7 +34,7 @@ class MainApp extends StatefulWidget {
   State<StatefulWidget> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   bool _onKeyEvent(KeyEvent event) {
     // If a text field is focused, let it handle the key (e.g., typing a space)
     final focusedNode = FocusManager.instance.primaryFocus;
@@ -56,13 +58,26 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     HardwareKeyboard.instance.addHandler(_onKeyEvent);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     HardwareKeyboard.instance.removeHandler(_onKeyEvent);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Reconcile timer with wall clock when coming back to foreground
+      try {
+        context.read<PomodoroTimerNotifier>().reconcileWithWallClock();
+      } catch (_) {}
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
