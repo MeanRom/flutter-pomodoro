@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:pomodoro/services/provider_timer.dart';
 import 'package:pomodoro/services/provider_todo.dart';
@@ -24,8 +25,45 @@ void main() async {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  bool _onKeyEvent(KeyEvent event) {
+    // If a text field is focused, let it handle the key (e.g., typing a space)
+    final focusedNode = FocusManager.instance.primaryFocus;
+    final isEditing =
+        focusedNode?.context?.widget is CupertinoTextField ||
+        focusedNode?.context
+                ?.findAncestorWidgetOfExactType<CupertinoTextField>() !=
+            null;
+
+    if (isEditing) {
+      return false; // do not intercept; allow input to handle the key
+    }
+
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+      context.read<PomodoroTimerNotifier>().toggleTimer();
+      return true; // handled
+    }
+    return false; // not handled
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKeyEvent);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKeyEvent);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -144,4 +144,13 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     reset();
     notifyListeners();
   }
+
+  void toggleTimer() {
+    if (_isRunning) {
+      stop();
+    } else {
+      start();
+    }
+    notifyListeners();
+  }
 }
