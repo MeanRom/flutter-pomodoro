@@ -36,4 +36,10 @@ class ProviderTodo extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void resetTodos() {
+    _todos = [];
+    localStorage.setItem('todos', jsonEncode(_todos));
+    notifyListeners();
+  }
 }

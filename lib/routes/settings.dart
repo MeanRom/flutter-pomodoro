@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/services/provider_timer.dart';
+import 'package:pomodoro/services/provider_todo.dart';
 import 'package:pomodoro/services/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -198,6 +199,30 @@ class _SettingsPageState extends State<SettingsPage> {
                             value: timer.darkmodeDuringRunning,
                             onChanged: (value) {
                               timer.updateDarkmodeDuringRunning(value);
+                            },
+                          ),
+                        ),
+
+                        CupertinoFormRow(
+                          prefix: Text('Reset list'),
+                          helper: Text(
+                            'Reset list',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          child: CupertinoButton(
+                            borderRadius: BorderRadius.circular(8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            color: ThemeColor().onPrimaryColor,
+                            mouseCursor: SystemMouseCursors.click,
+                            child: SizedBox(
+                              width: 55,
+                              child: Icon(LucideIcons.trash, size: 14),
+                            ),
+                            onPressed: () {
+                              ProviderTodo().resetTodos();
                             },
                           ),
                         ),
