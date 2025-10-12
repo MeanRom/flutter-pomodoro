@@ -39,7 +39,7 @@ class ProviderTodo extends ChangeNotifier {
 
   void resetTodos() {
     _todos = [];
-    localStorage.setItem('todos', jsonEncode(_todos));
+    localStorage.removeItem('todos');
     notifyListeners();
   }
 }
