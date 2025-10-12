@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/services/provider_todo.dart';
 import 'package:provider/provider.dart';
@@ -74,8 +75,64 @@ class TodoItem extends StatelessWidget {
   });
   final Function(int) onRemove;
 
+  List<String> _splitTodoText(String text) {
+    // Split on common delimiters like ':' and ';'
+    final delimiters = RegExp(r'[:|;]');
+    return text
+        .split(delimiters)
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+  }
+
+  List<String> _getDelimiters(String text) {
+    final delimiters = RegExp(r'[:|;]');
+    return delimiters.allMatches(text).map((match) => match.group(0)!).toList();
+  }
+
+  void _copyToClipboard(String text, BuildContext context) {
+    Clipboard.setData(ClipboardData(text: text));
+  }
+
+  List<Widget> _buildButtonsWithDelimiters(
+    List<String> textParts,
+    List<String> delimiters,
+    BuildContext context,
+  ) {
+    List<Widget> widgets = [];
+
+    for (int i = 0; i < textParts.length; i++) {
+      // Add the clickable button for the text part
+      widgets.add(
+        CupertinoButton(
+          mouseCursor: SystemMouseCursors.click,
+          padding: EdgeInsets.zero,
+          minimumSize: Size(0, 0),
+          borderRadius: BorderRadius.circular(8.0),
+          child: Text(
+            textParts[i],
+            style: TextStyle(color: CupertinoColors.label),
+          ),
+          onPressed: () {
+            _copyToClipboard(textParts[i], context);
+          },
+        ),
+      );
+
+      // Add the non-clickable delimiter if not the last item
+      if (i < delimiters.length) {
+        widgets.add(Text(delimiters[i]));
+      }
+    }
+
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textParts = _splitTodoText(todo);
+    final delimiters = _getDelimiters(todo);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
@@ -84,11 +141,30 @@ class TodoItem extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Text(
-                todo,
-                style: TextStyle(fontSize: 16),
-                softWrap: true,
-              ),
+              child: textParts.length > 1
+                  ? Wrap(
+                      spacing: 4.0,
+                      runSpacing: 4.0,
+                      children: _buildButtonsWithDelimiters(
+                        textParts,
+                        delimiters,
+                        context,
+                      ),
+                    )
+                  : CupertinoButton(
+                      mouseCursor: SystemMouseCursors.click,
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size(0, 0),
+                      child: Text(
+                        todo,
+                        style: TextStyle(color: CupertinoColors.label),
+                        softWrap: true,
+                      ),
+                      onPressed: () {
+                        _copyToClipboard(todo, context);
+                      },
+                    ),
             ),
           ),
           CupertinoButton(

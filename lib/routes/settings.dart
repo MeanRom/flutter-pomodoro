@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/services/provider_timer.dart';
+import 'package:pomodoro/services/provider_todo.dart';
 import 'package:pomodoro/services/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,33 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  void _showAlertDialogDelete(BuildContext context) {
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Alert'),
+        content: const Text('Are you sure to delete all todos?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(context);
+              Provider.of<ProviderTodo>(context, listen: false).resetTodos();
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PomodoroTimerNotifier>(
@@ -199,6 +227,32 @@ class _SettingsPageState extends State<SettingsPage> {
                             onChanged: (value) {
                               timer.updateDarkmodeDuringRunning(value);
                             },
+                          ),
+                        ),
+
+                        CupertinoFormRow(
+                          prefix: Text('Reset list'),
+                          child: CupertinoButton(
+                            borderRadius: BorderRadius.circular(8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            color: ThemeColor().onPrimaryColor,
+                            mouseCursor: SystemMouseCursors.click,
+                            child: SizedBox(
+                              width: 55,
+                              child: Icon(LucideIcons.trash, size: 14),
+                            ),
+                            onPressed:
+                                Provider.of<ProviderTodo>(
+                                  context,
+                                  listen: false,
+                                ).todos.isNotEmpty
+                                ? () {
+                                    _showAlertDialogDelete(context);
+                                  }
+                                : null,
                           ),
                         ),
                       ],
