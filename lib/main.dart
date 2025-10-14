@@ -86,7 +86,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       theme:
           Provider.of<PomodoroTimerNotifier>(context).darkmodeDuringRunning ==
                   true &&
-              Provider.of<PomodoroTimerNotifier>(context).isRunning
+              Provider.of<PomodoroTimerNotifier>(context).isRunning && Provider.of<PomodoroTimerNotifier>(context).isBreak == false
           ? ThemeColor.dark()
           : ThemeColor(),
       debugShowCheckedModeBanner: false,

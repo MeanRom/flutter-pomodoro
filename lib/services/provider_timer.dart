@@ -14,6 +14,7 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   int _currentSeconds = 0;
   Timer? _timer;
   final player = AudioPlayer();
+  bool isBreak = false;
 
   int _currentCycleIndex = 0;
   final List<int> _cycle = [0, 1, 0, 1, 0, 2];
@@ -39,8 +40,7 @@ class PomodoroTimerNotifier extends ChangeNotifier {
     try {
       settings = ISettings.fromJson(jsonDecode(raw));
     } catch (e) {
-      if (kDebugMode) {
-      }
+      if (kDebugMode) {}
     }
 
     if (settings != null) {
@@ -77,10 +77,13 @@ class PomodoroTimerNotifier extends ChangeNotifier {
   String _sessionName(int idx) {
     switch (idx) {
       case 0:
+        isBreak = false;
         return 'Focus';
       case 1:
+        isBreak = true;
         return 'Short break';
       case 2:
+        isBreak = true;
         return 'Long break';
       default:
         return 'Session';
@@ -94,7 +97,10 @@ class PomodoroTimerNotifier extends ChangeNotifier {
       return _currentSeconds;
     }
     final elapsed = DateTime.now().difference(_sessionStart!).inSeconds;
-    return (_sessionDurationSeconds - elapsed).clamp(0, _sessionDurationSeconds);
+    return (_sessionDurationSeconds - elapsed).clamp(
+      0,
+      _sessionDurationSeconds,
+    );
   }
 
   void _updateDisplayedRemaining() {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/routes/settings.dart';
@@ -14,6 +16,43 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerState extends State<Timer> {
+  List<String> _breakSentences = [
+    "Time to stretch those legs — your chair will miss you 🪑",
+    "Coffee break or code break? Why not both ☕️",
+    "Your brain called — it needs a quick reboot 🧠",
+    "Take five and let your thoughts compile 🧩",
+    "Hydration check! Grab that water bottle 💧",
+    "Step away from the keyboard… it’ll still be here when you get back ⌨️",
+    "A little walk now prevents big bugs later 🚶‍♂️",
+    "Snack detected: proceed to kitchen protocol 🍪",
+    "Time to give your eyes a screen vacation 🕶️",
+    "Stretch like no one’s watching 🤸‍♀️",
+    "Let the ideas simmer while you chill 🍵",
+    "Debug your mind with a deep breath 🌿",
+    "You’ve earned a scroll through memes 📱",
+    "Recharge mode: ON ⚡️",
+    "Even superheroes need a snack break 🦸‍♂️",
+    "Take a break before the code takes one for you 😴",
+    "Look away from the monitor, admire the real world 🌈",
+    "Snack now, fix bugs later 🍫",
+    "Do you think you could finish a marathon during your break? 👀",
+    "You’re not lazy — you’re just loading new ideas 💭",
+  ];
+
+  String sentence = "";
+
+  String _resetSentence() {
+    sentence = "";
+    return sentence;
+  }
+
+  String _randomBreakSentence() {
+    if (sentence.isEmpty) {
+      sentence = _breakSentences[Random().nextInt(_breakSentences.length)];
+    }
+    return sentence;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PomodoroTimerNotifier>(
@@ -114,6 +153,16 @@ class _TimerState extends State<Timer> {
                 ),
               ),
             ],
+          ),
+          Padding(
+            padding: timer.isBreak
+                ? const EdgeInsets.symmetric(vertical: 26.0)
+                : EdgeInsets.zero,
+            child: Text(
+              timer.isBreak ? _randomBreakSentence() : _resetSentence(),
+              style: TextStyle(color: ThemeColor().secondaryColor),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
