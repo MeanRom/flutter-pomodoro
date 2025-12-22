@@ -4,14 +4,14 @@ import 'package:pomodoro/models/todo_group.dart';
 import 'package:pomodoro/services/provider_todo.dart';
 import 'package:provider/provider.dart';
 
-class GroupManagerSheet extends StatefulWidget {
-  const GroupManagerSheet({super.key});
+class GroupManager extends StatefulWidget {
+  const GroupManager({super.key});
 
   @override
-  State<GroupManagerSheet> createState() => _GroupManagerSheetState();
+  State<GroupManager> createState() => _GroupManagerState();
 }
 
-class _GroupManagerSheetState extends State<GroupManagerSheet> {
+class _GroupManagerState extends State<GroupManager> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -75,7 +75,7 @@ class _GroupManagerSheetState extends State<GroupManagerSheet> {
                         ),
                         child: selectedColor == color
                             ? const Icon(
-                                CupertinoIcons.check_mark,
+                                LucideIcons.check,
                                 color: CupertinoColors.white,
                                 size: 20,
                               )
@@ -162,7 +162,7 @@ class _GroupManagerSheetState extends State<GroupManagerSheet> {
                         ),
                         child: selectedColor == color
                             ? const Icon(
-                                CupertinoIcons.check_mark,
+                                LucideIcons.check,
                                 color: CupertinoColors.white,
                                 size: 20,
                               )
@@ -238,7 +238,7 @@ class _GroupManagerSheetState extends State<GroupManagerSheet> {
             middle: const Text('Manage Groups'),
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
-              child: const Icon(CupertinoIcons.add),
+              child: const Icon(LucideIcons.plus),
               onPressed: () => _showCreateGroupDialog(context),
             ),
           ),

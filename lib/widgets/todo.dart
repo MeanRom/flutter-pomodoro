@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:pomodoro/models/todo_item.dart';
 import 'package:pomodoro/services/provider_todo.dart';
-import 'package:pomodoro/widgets/group_manager_sheet.dart';
+import 'package:pomodoro/routes/group_manager.dart';
 import 'package:provider/provider.dart';
 
 class Todo extends StatefulWidget {
@@ -20,217 +20,209 @@ class _TodoState extends State<Todo> {
   void _showGroupManager(BuildContext context) {
     showCupertinoModalPopup(
       context: context,
-      builder: (context) => const GroupManagerSheet(),
+      builder: (context) => const GroupManager(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProviderTodo>(
-      builder: (context, provider, child) => Padding(
-        padding: const EdgeInsets.only(top: 35.0),
-        child: Column(
-          children: [
-            // Collapsible group selector section
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: _isGroupSelectorExpanded ? 40 : 0,
-              child: _isGroupSelectorExpanded
-                  ? ListView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      children: [
-                        // All tasks button
-                        _GroupChip(
-                          label: 'All',
-                          count: provider.allTodos.length,
-                          color: CupertinoColors.systemGrey,
-                          isSelected: provider.selectedGroupId == null,
-                          onTap: () => provider.selectGroup(null),
-                        ),
-                        const SizedBox(width: 8),
-                        // Group chips with task count
-                        ...provider.groups.map((group) {
-                          final taskCount = provider.allTodos
-                              .where((todo) => todo.groupId == group.id)
-                              .length;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: _GroupChip(
-                              label: group.name,
-                              count: taskCount,
-                              color: group.color,
-                              isSelected: provider.selectedGroupId == group.id,
-                              onTap: () => provider.selectGroup(group.id),
-                            ),
-                          );
-                        }),
-                        // Manage groups button
-                        CupertinoButton(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
-                          minSize: 0,
-                          borderRadius: BorderRadius.circular(16),
-                          color: CupertinoColors.systemGrey5,
-                          onPressed: () => _showGroupManager(context),
-                          child: const Icon(
-                            LucideIcons.settings,
-                            size: 16,
-                            color: CupertinoColors.systemGrey,
+      builder: (context, provider, child) => Column(
+        children: [
+          // Collapsible group selector section
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: _isGroupSelectorExpanded ? 40 : 0,
+            child: _isGroupSelectorExpanded
+                ? ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    children: [
+                      // Group chips with task count
+                      ...provider.groups.map((group) {
+                        final taskCount = provider.allTodos
+                            .where((todo) => todo.groupId == group.id)
+                            .length;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: _GroupChip(
+                            label: group.name,
+                            count: taskCount,
+                            color: group.color,
+                            isSelected: provider.selectedGroupId == group.id,
+                            onTap: () => provider.selectGroup(group.id),
                           ),
+                        );
+                      }),
+                      // Manage groups button
+                      CupertinoButton(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
                         ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            // Toggle button and group info
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  // Expand/Collapse button
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minSize: 0,
-                    onPressed: () {
-                      setState(() {
-                        _isGroupSelectorExpanded = !_isGroupSelectorExpanded;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          _isGroupSelectorExpanded
-                              ? CupertinoIcons.chevron_up
-                              : CupertinoIcons.chevron_down,
+                        minSize: 0,
+                        borderRadius: BorderRadius.circular(16),
+                        color: CupertinoColors.systemGrey5,
+                        onPressed: () => _showGroupManager(context),
+                        child: const Icon(
+                          LucideIcons.settings,
                           size: 16,
                           color: CupertinoColors.systemGrey,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _isGroupSelectorExpanded
-                              ? 'Hide Groups'
-                              : provider.selectedGroup?.name ?? 'All Tasks',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: CupertinoColors.systemGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  // Task statistics
-                  if (provider.todos.isNotEmpty)
-                    Text(
-                      '${provider.todos.where((t) => t.isCompleted).length}/${provider.todos.length} done',
-                      style: const TextStyle(
-                        fontSize: 12,
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+          ),
+          // Toggle button and group info
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                // Expand/Collapse button
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minSize: 0,
+                  onPressed: () {
+                    setState(() {
+                      _isGroupSelectorExpanded = !_isGroupSelectorExpanded;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isGroupSelectorExpanded
+                            ? LucideIcons.chevronUp
+                            : LucideIcons.chevronDown,
+                        size: 16,
                         color: CupertinoColors.systemGrey,
                       ),
-                    ),
-                ],
-              ),
-            ),
-            // Task input with group indicator
-            Row(
-              children: [
-                Expanded(
-                  child: CupertinoTextField.borderless(
-                    placeholder: provider.selectedGroup != null
-                        ? 'Add task to ${provider.selectedGroup!.name}'
-                        : 'Add a new task',
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    onSubmitted: (value) {
-                      if (value.trim().isNotEmpty) {
-                        provider.addTodo(value.trim());
-                        _controller.clear();
-                        FocusScope.of(context).requestFocus(_focusNode);
-                      }
-                    },
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: provider.selectedGroup?.color
-                                  .withOpacity(0.3) ??
-                              CupertinoColors.systemGrey4,
-                          width: 2,
+                      const SizedBox(width: 4),
+                      Text(
+                        _isGroupSelectorExpanded
+                            ? 'Hide Groups'
+                            : provider.selectedGroup?.name ?? 'All Tasks',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: CupertinoColors.systemGrey,
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-                if (provider.selectedGroup != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: provider.selectedGroup!.color,
-                        shape: BoxShape.circle,
-                      ),
+                const Spacer(),
+                // Task statistics
+                if (provider.todos.isNotEmpty)
+                  Text(
+                    '${provider.todos.where((t) => t.isCompleted).length}/${provider.todos.length} done',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: CupertinoColors.systemGrey,
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 8),
-            // Task list
-            Expanded(
-              child: provider.todos.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            CupertinoIcons.checkmark_circle,
-                            size: 64,
-                            color: CupertinoColors.systemGrey3,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            provider.selectedGroup != null
-                                ? 'No tasks in ${provider.selectedGroup!.name}'
-                                : 'No tasks yet',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: CupertinoColors.systemGrey,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Add a task to get started!',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: CupertinoColors.systemGrey2,
-                            ),
-                          ),
-                        ],
+          ),
+          // Task input with group indicator
+          Row(
+            children: [
+              Expanded(
+                child: CupertinoTextField.borderless(
+                  placeholder: provider.selectedGroup != null
+                      ? 'Add task to ${provider.selectedGroup!.name}'
+                      : 'Add a new task',
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  onSubmitted: (value) {
+                    if (value.trim().isNotEmpty) {
+                      provider.addTodo(value.trim());
+                      _controller.clear();
+                      FocusScope.of(context).requestFocus(_focusNode);
+                    }
+                  },
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color:
+                            provider.selectedGroup?.color.withOpacity(0.3) ??
+                            CupertinoColors.systemGrey4,
+                        width: 2,
                       ),
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: provider.todos.length,
-                      itemBuilder: (context, index) {
-                        final todo = provider.todos[index];
-                        return TodoItemWidget(
-                          todoItem: todo,
-                          index: index,
-                          groupColor: provider.groups
-                              .firstWhere((g) => g.id == todo.groupId,
-                                  orElse: () => provider.groups.first)
-                              .color,
-                          onRemove: (idx) => provider.removeTodoAt(idx),
-                          onToggleComplete: () =>
-                              provider.toggleTodoComplete(todo.id),
-                        );
-                      },
                     ),
-            ),
-          ],
-        ),
+                  ),
+                ),
+              ),
+              if (provider.selectedGroup != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: provider.selectedGroup!.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Task list
+          Expanded(
+            child: provider.todos.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.circleCheck,
+                          size: 64,
+                          color: CupertinoColors.systemGrey3,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          provider.selectedGroup != null
+                              ? 'No tasks in ${provider.selectedGroup!.name}'
+                              : 'No tasks yet',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: CupertinoColors.systemGrey,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Add a task to get started!',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: CupertinoColors.systemGrey2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: provider.todos.length,
+                    itemBuilder: (context, index) {
+                      final todo = provider.todos[index];
+                      return TodoItemWidget(
+                        todoItem: todo,
+                        index: index,
+                        groupColor: provider.groups
+                            .firstWhere(
+                              (g) => g.id == todo.groupId,
+                              orElse: () => provider.groups.first,
+                            )
+                            .color,
+                        onRemove: (idx) => provider.removeTodoAt(idx),
+                        onToggleComplete: () =>
+                            provider.toggleTodoComplete(todo.id),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -350,8 +342,9 @@ class TodoItemWidget extends StatelessWidget {
               color: todoItem.isCompleted
                   ? CupertinoColors.systemGrey
                   : CupertinoColors.label,
-              decoration:
-                  todoItem.isCompleted ? TextDecoration.lineThrough : null,
+              decoration: todoItem.isCompleted
+                  ? TextDecoration.lineThrough
+                  : null,
             ),
           ),
           onPressed: () {
@@ -361,14 +354,16 @@ class TodoItemWidget extends StatelessWidget {
       );
 
       if (i < delimiters.length) {
-        widgets.add(Text(
-          delimiters[i],
-          style: TextStyle(
-            color: todoItem.isCompleted
-                ? CupertinoColors.systemGrey
-                : CupertinoColors.label,
+        widgets.add(
+          Text(
+            delimiters[i],
+            style: TextStyle(
+              color: todoItem.isCompleted
+                  ? CupertinoColors.systemGrey
+                  : CupertinoColors.label,
+            ),
           ),
-        ));
+        );
       }
     }
 
@@ -384,12 +379,7 @@ class TodoItemWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(
-            color: groupColor,
-            width: 3,
-          ),
-        ),
+        border: Border(left: BorderSide(color: groupColor, width: 3)),
         color: CupertinoColors.systemGrey6.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
@@ -402,10 +392,12 @@ class TodoItemWidget extends StatelessWidget {
             onPressed: onToggleComplete,
             child: Icon(
               todoItem.isCompleted
-                  ? CupertinoIcons.check_mark_circled_solid
-                  : CupertinoIcons.circle,
+                  ? LucideIcons.circleCheck
+                  : LucideIcons.circle,
               size: 24,
-              color: todoItem.isCompleted ? groupColor : groupColor.withOpacity(0.5),
+              color: todoItem.isCompleted
+                  ? groupColor
+                  : groupColor.withOpacity(0.5),
             ),
           ),
           const SizedBox(width: 12),
