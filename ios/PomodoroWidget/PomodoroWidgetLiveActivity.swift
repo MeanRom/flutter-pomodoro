@@ -13,76 +13,77 @@ struct PomodoroWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: PomodoroActivityAttributes.self) { context in
             // Lock screen/banner UI
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
+            HStack(spacing: 16) {
+                // Timer icon with session color
+                ZStack {
+                    Circle()
+                        .fill(sessionColor(for: context.state.sessionName).opacity(0.2))
+                        .frame(width: 50, height: 50)
+
                     Image(systemName: "timer")
                         .font(.title2)
-                        .foregroundColor(.blue)
+                        .foregroundColor(sessionColor(for: context.state.sessionName))
+                }
 
+                VStack(alignment: .leading, spacing: 6) {
+                    // Session name
                     Text(context.state.sessionName)
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    Spacer()
-
+                    // Time remaining
                     Text(timerText(from: context.state.remainingSeconds))
-                        .font(.system(.title2, design: .rounded))
+                        .font(.system(.title, design: .rounded))
                         .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                        .foregroundColor(sessionColor(for: context.state.sessionName))
                         .monospacedDigit()
-                }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    ProgressView(value: Double(context.state.remainingSeconds),
+                    // Progress bar
+                    ProgressView(value: Double(context.state.totalSeconds - context.state.remainingSeconds),
                                total: Double(context.state.totalSeconds))
-                        .tint(.blue)
-                        .scaleEffect(x: 1, y: 1.5, anchor: .center)
-
-                    HStack {
-                        Text(progressText(current: context.state.remainingSeconds,
-                                        total: context.state.totalSeconds))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        Spacer()
-
-                        Text("\(Int((Double(context.state.totalSeconds - context.state.remainingSeconds) / Double(context.state.totalSeconds)) * 100))% complete")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                        .tint(sessionColor(for: context.state.sessionName))
+                        .scaleEffect(x: 1, y: 1.2, anchor: .center)
                 }
+
+                Spacer()
+
+                // "Tap to open" indicator
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             .padding(16)
-            .activityBackgroundTint(Color.white.opacity(0.95))
+            .activityBackgroundTint(Color(white: 0.95))
             .activitySystemActionForegroundColor(Color.black)
 
         } dynamicIsland: { context in
             // Dynamic Island configuration
             DynamicIsland {
-                // Expanded UI - when user long presses
+                // Expanded UI
                 DynamicIslandExpandedRegion(.leading) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "timer")
-                            .font(.title3)
-                            .foregroundColor(.blue)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "timer")
+                                .font(.title3)
+                                .foregroundColor(sessionColor(for: context.state.sessionName))
 
-                        VStack(alignment: .leading, spacing: 2) {
                             Text(context.state.sessionName)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
-
-                            Text("Pomodoro")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
                         }
+
+                        Text("Pomodoro Timer")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
                     }
                 }
 
                 DynamicIslandExpandedRegion(.trailing) {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(timerText(from: context.state.remainingSeconds))
-                            .font(.system(.title3, design: .rounded))
+                            .font(.system(.title2, design: .rounded))
                             .fontWeight(.bold)
+                            .foregroundColor(sessionColor(for: context.state.sessionName))
                             .monospacedDigit()
 
                         Text("remaining")
@@ -92,72 +93,84 @@ struct PomodoroWidgetLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 8) {
-                        ProgressView(value: Double(context.state.remainingSeconds),
-                                   total: Double(context.state.totalSeconds))
-                            .tint(.blue)
-                            .scaleEffect(x: 1, y: 2, anchor: .center)
+                    VStack(spacing: 6) {
+                        // Progress bar
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                // Background
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(height: 8)
+
+                                // Progress
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(sessionColor(for: context.state.sessionName))
+                                    .frame(
+                                        width: geometry.size.width * CGFloat(Double(context.state.totalSeconds - context.state.remainingSeconds) / Double(context.state.totalSeconds)),
+                                        height: 8
+                                    )
+                            }
+                        }
+                        .frame(height: 8)
 
                         HStack {
-                            Text(progressText(current: context.state.remainingSeconds,
-                                            total: context.state.totalSeconds))
+                            Text("\(Int((Double(context.state.totalSeconds - context.state.remainingSeconds) / Double(context.state.totalSeconds)) * 100))% complete")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
 
                             Spacer()
 
-                            Text("\(Int((Double(context.state.totalSeconds - context.state.remainingSeconds) / Double(context.state.totalSeconds)) * 100))%")
+                            Text("Tap to open")
                                 .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .padding(.top, 8)
+                    .padding(.top, 6)
                 }
 
             } compactLeading: {
-                // Compact leading (left side when not expanded)
+                // Compact leading
                 HStack(spacing: 4) {
                     Image(systemName: "timer")
                         .font(.caption)
-
-                    Text(timerText(from: context.state.remainingSeconds))
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .monospacedDigit()
+                        .foregroundColor(sessionColor(for: context.state.sessionName))
                 }
-                .foregroundColor(.blue)
 
             } compactTrailing: {
-                // Compact trailing (right side when not expanded)
-                ProgressView(value: Double(context.state.remainingSeconds),
-                           total: Double(context.state.totalSeconds)) {
-                    EmptyView()
-                }
-                .progressViewStyle(.circular)
-                .tint(.blue)
+                // Compact trailing - show time
+                Text(timerText(from: context.state.remainingSeconds))
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(sessionColor(for: context.state.sessionName))
+                    .monospacedDigit()
 
             } minimal: {
-                // Minimal presentation (when multiple activities are active)
+                // Minimal - just timer icon
                 Image(systemName: "timer")
-                    .foregroundColor(.blue)
+                    .foregroundColor(sessionColor(for: context.state.sessionName))
             }
         }
     }
 
-    // Helper function to format time as MM:SS
+    // Helper: Format time as MM:SS
     private func timerText(from seconds: Int) -> String {
         let minutes = seconds / 60
         let secs = seconds % 60
         return String(format: "%02d:%02d", minutes, secs)
     }
 
-    // Helper function to show progress text
-    private func progressText(current: Int, total: Int) -> String {
-        let elapsed = total - current
-        let minutes = elapsed / 60
-        let secs = elapsed % 60
-        return String(format: "%02d:%02d elapsed", minutes, secs)
+    // Helper: Get color based on session type
+    private func sessionColor(for sessionName: String) -> Color {
+        switch sessionName.lowercased() {
+        case "focus":
+            return Color.red
+        case "short break":
+            return Color.green
+        case "long break":
+            return Color.blue
+        default:
+            return Color.blue
+        }
     }
 }
 
