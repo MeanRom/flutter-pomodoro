@@ -21,6 +21,9 @@ class LiveActivityService {
     required int remainingSeconds,
   }) async {
     try {
+      print('🟢 [LiveActivity] Attempting to start activity...');
+      print('🟢 [LiveActivity] Session: $sessionName, Total: $totalSeconds, Remaining: $remainingSeconds');
+
       // End any existing activity first
       await endActivity();
 
@@ -35,12 +38,17 @@ class LiveActivityService {
         'endTimestamp': endTime.millisecondsSinceEpoch ~/ 1000,
       };
 
+      print('🟢 [LiveActivity] Activity data: $activityData');
+
       // Start the Live Activity
       _activityId = await _liveActivitiesPlugin.createActivity(activityData);
-    } catch (e) {
+
+      print('🟢 [LiveActivity] Activity created with ID: $_activityId');
+    } catch (e, stackTrace) {
       // Live Activities might not be supported on this device/iOS version
       // Fail silently as this is an optional feature
-      print('Failed to start Live Activity: $e');
+      print('🔴 [LiveActivity] Failed to start Live Activity: $e');
+      print('🔴 [LiveActivity] Stack trace: $stackTrace');
     }
   }
 
