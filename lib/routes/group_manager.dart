@@ -203,7 +203,7 @@ class _GroupManagerState extends State<GroupManager> {
       builder: (context) => CupertinoAlertDialog(
         title: Text('Delete "${group.name}"?'),
         content: const Text(
-          'All tasks in this group will be moved to "All Tasks".',
+          'All tasks in this group will be moved to "General".',
         ),
         actions: [
           CupertinoDialogAction(

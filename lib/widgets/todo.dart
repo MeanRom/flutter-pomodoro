@@ -99,9 +99,9 @@ class _TodoState extends State<Todo> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _isGroupSelectorExpanded
-                            ? 'Hide Groups'
-                            : provider.selectedGroup?.name ?? 'All Tasks',
+                          _isGroupSelectorExpanded
+                              ? 'Hide Groups'
+                              : provider.selectedGroup?.name ?? 'General',
                         style: const TextStyle(
                           fontSize: 13,
                           color: CupertinoColors.systemGrey,

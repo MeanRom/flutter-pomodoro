@@ -54,6 +54,7 @@ class ProviderTodo extends ChangeNotifier {
       _groups = _getDefaultGroups();
       _saveGroups();
     }
+    _ensureDefaultGroup();
 
     // Load todos (migrate from old format if needed)
     try {
@@ -88,7 +89,7 @@ class ProviderTodo extends ChangeNotifier {
     return [
       TodoGroup(
         id: 'default',
-        name: 'All Tasks',
+        name: 'General',
         color: CupertinoColors.systemBlue,
         order: 0,
       ),
@@ -105,6 +106,26 @@ class ProviderTodo extends ChangeNotifier {
         order: 2,
       ),
     ];
+  }
+
+  void _ensureDefaultGroup() {
+    final defaultIndex = _groups.indexWhere((g) => g.id == 'default');
+    if (defaultIndex == -1) {
+      _groups.insert(
+        0,
+        TodoGroup(
+          id: 'default',
+          name: 'General',
+          color: CupertinoColors.systemBlue,
+          order: 0,
+        ),
+      );
+      _saveGroups();
+    } else if (_groups[defaultIndex].name != 'General') {
+      _groups[defaultIndex] = _groups[defaultIndex].copyWith(name: 'General');
+      _saveGroups();
+    }
+    _selectedGroupId = 'default';
   }
 
   void _saveTodos() {
@@ -190,7 +211,7 @@ class ProviderTodo extends ChangeNotifier {
 
     _groups.removeWhere((g) => g.id == id);
     if (_selectedGroupId == id) {
-      _selectedGroupId = null;
+      _selectedGroupId = 'default';
     }
 
     _saveTodos();
@@ -206,7 +227,7 @@ class ProviderTodo extends ChangeNotifier {
 
   void resetGroups() {
     _groups = _getDefaultGroups();
-    _selectedGroupId = null;
+    _selectedGroupId = 'default';
     _saveGroups();
     notifyListeners();
   }
