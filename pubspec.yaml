@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications: ^19.4.2
+  live_activities: ^1.6.0
   localstorage: ^6.0.0
   lucide_icons_flutter: ^3.1.0
   provider: ^6.1.5+1
