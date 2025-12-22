@@ -214,6 +214,10 @@ class PomodoroTimerNotifier extends ChangeNotifier {
       title: 'Pomodoro: ${_sessionName(_index)} started',
       body: 'Duration: ${_durations[_index]} minutes',
     );
+    NotificationService().showInAppBanner(
+      title: 'Pomodoro: ${_sessionName(_index)} started',
+      body: 'Duration: ${_durations[_index]} minutes',
+    );
 
     // Schedule the end notification for this new session
     await _scheduleEndNotification();
@@ -255,6 +259,10 @@ class PomodoroTimerNotifier extends ChangeNotifier {
       // Show finish notification (app is in foreground)
       NotificationService().showNow(
         id: _notifEndId + 2,
+        title: 'Pomodoro: ${_sessionName(_index)} finished',
+        body: 'Switching to the next session...',
+      );
+      NotificationService().showInAppBanner(
         title: 'Pomodoro: ${_sessionName(_index)} finished',
         body: 'Switching to the next session...',
       );

@@ -83,6 +83,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
+      navigatorKey: NotificationService().navigatorKey,
       theme:
           Provider.of<PomodoroTimerNotifier>(context).darkmodeDuringRunning ==
                   true &&

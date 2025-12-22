@@ -1,4 +1,7 @@
 
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -12,6 +15,9 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  OverlayEntry? _bannerEntry;
+  Timer? _bannerTimer;
 
   Future<void> init() async {
     if (_initialized) return;
@@ -124,5 +130,81 @@ class NotificationService {
 
   Future<void> cancel(int id) async {
     await _fln.cancel(id);
+  }
+
+  void showInAppBanner({
+    required String title,
+    required String body,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    final state = navigatorKey.currentState;
+    if (state == null) return;
+    final overlay = state.overlay;
+    if (overlay == null) return;
+
+    _bannerTimer?.cancel();
+    _bannerEntry?.remove();
+    _bannerEntry = OverlayEntry(
+      builder: (context) {
+        final brightness = CupertinoTheme.of(context).brightness;
+        final background = brightness == Brightness.dark
+            ? const Color(0xFF2C2C2E)
+            : const Color(0xFFF2F2F7);
+        final textColor = brightness == Brightness.dark
+            ? const Color(0xFFF2F2F7)
+            : const Color(0xFF1C1C1E);
+
+        return Positioned(
+          top: 8,
+          left: 12,
+          right: 12,
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: background,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x33000000),
+                    blurRadius: 12,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: DefaultTextStyle(
+                style: TextStyle(color: textColor),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      body,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(_bannerEntry!);
+    _bannerTimer = Timer(duration, () {
+      _bannerEntry?.remove();
+      _bannerEntry = null;
+    });
   }
 }
