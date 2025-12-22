@@ -100,7 +100,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
                   ? 500
                   : MediaQuery.of(context).size.width * 0.9,
               child: Column(
-                spacing: 20,
+                spacing: 10,
                 children: [
                   Navigation(),
                   Center(child: Timer()),
