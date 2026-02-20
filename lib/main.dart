@@ -94,20 +94,25 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       home: CupertinoPageScaffold(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32.0),
-          child: Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width > 600
-                  ? 500
-                  : MediaQuery.of(context).size.width * 0.9,
-              child: Column(
-                spacing: 20,
-                children: [
-                  Navigation(),
-                  Center(child: Timer()),
-                  Todo(),
-                ],
-              ),
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width > 600
+                      ? 500
+                      : MediaQuery.of(context).size.width * 0.9,
+                  height: constraints.maxHeight,
+                  child: Column(
+                    spacing: 10,
+                    children: [
+                      Navigation(),
+                      Center(child: Timer()),
+                      Expanded(child: Todo()),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
